@@ -19,11 +19,11 @@ import {
 
 const panes = [
   {
-    menuItem: "My ",
+    menuItem: "My Givings",
     render: () => <Tab.Pane loading>Tab 1 Content</Tab.Pane>
   },
   {
-    menuItem: "My Receiving",
+    menuItem: "My Receivings",
     render: () => <Tab.Pane>Tab 2 Content</Tab.Pane>
   }
 ];
