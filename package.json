@@ -3,7 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.18.0",
+    "chart.js": "^2.7.2",
+    "chartjs": "^0.3.24",
     "react": "^16.4.2",
+    "react-chartjs-2": "^2.7.4",
     "react-dom": "^16.4.2",
     "react-scripts": "1.1.4",
     "semantic-ui-css": "^2.3.3",
