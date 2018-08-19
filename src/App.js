@@ -26,12 +26,9 @@ import {
 
 function renderTable() {
   var datas = [];
-  var table = Axios.post(
-    "https://ledgerfitbackend.herokuapp.com/get-transactions",
-    {
-      address: "0x02f5359117678f8ea38f82a3d601e43e4db92f9e"
-    }
-  ).then(function(result) {
+  var table = Axios.post("http://localhost:3000/get-transactions", {
+    address: "0x02f5359117678f8ea38f82a3d601e43e4db92f9e"
+  }).then(function(result) {
     let table = [];
     for (var i in result.data.out) {
       table.push(
@@ -50,7 +47,7 @@ function RenderChart(props) {
   const dataFetched = props.datafetched;
   if (dataFetched) {
     console.log(props.data);
-    return <Doughnut data={props.data} />;
+    return <Doughnut height={150} data={props.data} />;
   } else {
     return "";
   }
@@ -79,11 +76,12 @@ class MyGiving extends Component {
   componentDidMount() {
     var self = this;
     self.setState({ isLoading: true });
-    Axios.post("https://ledgerfitbackend.herokuapp.com/get-transactions", {
+    Axios.post("http://localhost:3000/get-transactions", {
       address: "0x02f5359117678f8ea38f82a3d601e43e4db92f9e"
     }).then(function(result) {
       let table = [];
       var categories = [];
+      var totalPer = 0;
       for (var i in result.data.out) {
         table.push(
           <tr>
@@ -98,19 +96,33 @@ class MyGiving extends Component {
         );
         if (categories.indexOf(result.data.out[i].category) >= 0) {
           categories[result.data.out[i].category]++;
+          totalPer++;
         } else if (result.data.out[i].category != null) {
           categories[result.data.out[i].category] = 1;
+          totalPer++;
         }
+      }
+
+      var categoriesNameWithPercentage = [];
+      for (var cat in categories) {
+        var cPer = (categories[cat] / totalPer) * 100;
+        var name = cat + " (" + cPer.toFixed(2) + "%)";
+        categoriesNameWithPercentage.push(name);
       }
 
       self.setState({
         donut: {
           datasets: [
             {
-              data: Object.values(categories)
+              data: Object.values(categories),
+              backgroundColor: [
+                "rgba(255, 99, 132, 1)",
+                "rgba(54, 162, 235, 1)",
+                "rgba(255, 206, 86, 1)"
+              ]
             }
           ],
-          labels: Object.keys(categories)
+          labels: categoriesNameWithPercentage
         },
         dataFetched: true
       });
@@ -144,8 +156,21 @@ class MyGiving extends Component {
 }
 
 class MyReceiving extends Component {
-  show = size => () => this.setState({ size, open: true });
+  show = (size, address) => () => {
+    this.setState({ size, address, open: true });
+  };
   close = () => this.setState({ open: false });
+
+  showRemark = (size, review) => () => {
+    if (review != null) {
+      this.setState({
+        size: size,
+        remarks: review,
+        openRemark: true
+      });
+    }
+  };
+  closeRemark = () => this.setState({ openRemark: false });
 
   constructor(props) {
     super(props);
@@ -154,14 +179,23 @@ class MyReceiving extends Component {
       donut: [],
       dataFetched: false,
       isLoading: false,
-      open: false
+      open: false,
+      openRemark: false,
+      remarks: "",
+      address: ""
     };
   }
+
+  // handleSetRemark(event) {
+  //   event.preventDefault();
+  //   var self = this;
+  //   console.log(this.state);
+  // }
 
   componentDidMount() {
     var self = this;
     self.setState({ isLoading: true });
-    Axios.post("https://ledgerfitbackend.herokuapp.com/get-transactions", {
+    Axios.post("http://localhost:3000/get-transactions", {
       address: "0x02f5359117678f8ea38f82a3d601e43e4db92f9e"
     }).then(function(result) {
       let table = [];
@@ -176,7 +210,14 @@ class MyReceiving extends Component {
             </td>
             <td>{result.data.in[i].from}</td>
             <td>
-              <Button onClick={self.show("tiny")}>Leave Remark</Button>
+              <Button
+                onClick={self.showRemark("small", result.data.in[i].review)}
+              >
+                Remarks
+              </Button>
+              <Button onClick={self.show("tiny", result.data.in[i].hash)}>
+                Leave Remark
+              </Button>
             </td>
           </tr>
         );
@@ -187,8 +228,25 @@ class MyReceiving extends Component {
     });
   }
 
+  onChange = e => {
+    // Because we named the inputs to match their corresponding values in state, it's
+    // super easy to update the state
+    this.setState({ [e.target.name]: e.target.value });
+  };
+
+  handleSetRemark = e => {
+    e.preventDefault();
+    var self = this;
+    const { remarks, address } = this.state;
+    Axios.post("http://localhost:3000/add-review", { remarks, address }).then(
+      result => {
+        self.close();
+      }
+    );
+  };
+
   render() {
-    const { open, size } = this.state;
+    const { open, openRemark, size } = this.state;
     return (
       <Tab.Pane>
         <RenderChart
@@ -207,14 +265,38 @@ class MyReceiving extends Component {
           <Table.Body>{this.state.data}</Table.Body>
         </Table>
         <RenderLoader loading={this.state.isLoading} />
+        <Modal size={size} open={openRemark} onClose={this.closeRemark}>
+          <Modal.Header>Remarks</Modal.Header>
+          <Modal.Content>
+            <p>{this.state.remarks}</p>
+          </Modal.Content>
+          <Modal.Actions>
+            <Button negative>Close</Button>
+            <Button
+              positive
+              icon="checkmark"
+              labelPosition="right"
+              content="Confirm"
+            />
+          </Modal.Actions>
+        </Modal>
+
         <Modal size={size} open={open} onClose={this.close}>
           <Modal.Header>Leave remark</Modal.Header>
           <Modal.Content>
-            <textarea name="remark" style={{ width: "100%" }} row="5" />
+            <Form onSubmit={this.handleSetRemark}>
+              <textarea
+                name="remarks"
+                onChange={this.onChange}
+                style={{ width: "100%" }}
+                row="5"
+              />
+            </Form>
           </Modal.Content>
           <Modal.Actions>
             <Button negative>Cancel</Button>
             <Button
+              onClick={this.handleSetRemark}
               positive
               icon="checkmark"
               labelPosition="right"
