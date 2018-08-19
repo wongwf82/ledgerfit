@@ -164,7 +164,6 @@ class MyReceiving extends Component {
       let table = [];
       var categories = [];
       for (var i in result.data.in) {
-        console.log(result.data.in);
         table.push(
           <tr>
             <td style={{ textOverflow: "ellipsis" }}>
