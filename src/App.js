@@ -26,9 +26,12 @@ import {
 
 function renderTable() {
   var datas = [];
-  var table = Axios.post("http://localhost:3000/get-transactions", {
-    address: "0x02f5359117678f8ea38f82a3d601e43e4db92f9e"
-  }).then(function(result) {
+  var table = Axios.post(
+    "https://ledgerfitbackend.herokuapp.com/get-transactions",
+    {
+      address: "0x02f5359117678f8ea38f82a3d601e43e4db92f9e"
+    }
+  ).then(function(result) {
     let table = [];
     for (var i in result.data.out) {
       table.push(
@@ -76,7 +79,7 @@ class MyGiving extends Component {
   componentDidMount() {
     var self = this;
     self.setState({ isLoading: true });
-    Axios.post("http://localhost:3000/get-transactions", {
+    Axios.post("https://ledgerfitbackend.herokuapp.com/get-transactions", {
       address: "0x02f5359117678f8ea38f82a3d601e43e4db92f9e"
     }).then(function(result) {
       let table = [];
@@ -158,7 +161,7 @@ class MyReceiving extends Component {
   componentDidMount() {
     var self = this;
     self.setState({ isLoading: true });
-    Axios.post("http://localhost:3000/get-transactions", {
+    Axios.post("https://ledgerfitbackend.herokuapp.com/get-transactions", {
       address: "0x02f5359117678f8ea38f82a3d601e43e4db92f9e"
     }).then(function(result) {
       let table = [];
