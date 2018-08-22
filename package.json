@@ -6,7 +6,7 @@
     "start": "node ./bin/www",
     "client": "cd client && yarn start",
     "server": "nodemon app.js",
-    "heroku-postbuild": "cd client && yarn && yarn build"
+    "heroku-postbuild": " sequelize db:migrate && sequelize db:seed:all && cd client && yarn && yarn build"
   },
   "dependencies": {
     "cookie-parser": "~1.4.3",
