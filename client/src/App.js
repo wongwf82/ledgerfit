@@ -77,7 +77,7 @@ class MyGiving extends Component {
     var self = this;
     self.setState({ isLoading: true });
     Axios.post("/get-transactions", {
-      address: "0x02f5359117678f8ea38f82a3d601e43e4db92f9e"
+      address: self.props.props.address
     }).then(function(result) {
       let table = [];
       var categories = [];
@@ -196,7 +196,7 @@ class MyReceiving extends Component {
     var self = this;
     self.setState({ isLoading: true });
     Axios.post("/get-transactions", {
-      address: "0x02f5359117678f8ea38f82a3d601e43e4db92f9e"
+      address: self.props.props.address
     }).then(function(result) {
       let table = [];
       var categories = [];
@@ -313,11 +313,11 @@ class MyReceiving extends Component {
 const panes = [
   {
     menuItem: "My Givings",
-    render: () => <MyGiving />
+    render: props => <MyGiving props={props} />
   },
   {
     menuItem: "My Receivings",
-    render: () => <MyReceiving />
+    render: props => <MyReceiving props={props} />
   }
 ];
 
@@ -327,10 +327,14 @@ function noAddress(props) {
 
 function RenderTab(props) {
   const isLoggedIn = props.isLoggedIn;
-  if (isLoggedIn) {
-    return <Tab panes={panes} />;
+  const address = props.address;
+  const otherProps = {
+    address: props.address
+  };
+  if (isLoggedIn && address != null) {
+    return <Tab {...otherProps} panes={panes} />;
   } else {
-    return "";
+    return "Enter wallet address";
   }
 }
 
@@ -338,8 +342,9 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: "",
       address: null,
+      _address: null,
+      value: "",
       isLoading: false,
       addressAvailableAndValid: false
     };
@@ -347,6 +352,12 @@ class App extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
   }
+
+  onChange = e => {
+    // Because we named the inputs to match their corresponding values in state, it's
+    // super easy to update the state
+    this.setState({ [e.target.name]: e.target.value });
+  };
 
   handleChange(event) {
     const target = event.target;
@@ -360,9 +371,9 @@ class App extends Component {
 
   handleSearch(event) {
     event.preventDefault();
-    console.log(this.state.value);
     this.setState({
-      isLoading: true
+      isLoading: true,
+      address: this.state._address
     });
     // var self = this;
     // Axios.post("https://ledgerfitbackend.herokuapp.com/get-transactions", {
@@ -375,6 +386,7 @@ class App extends Component {
   render() {
     const addressAvailableAndvalid = this.state.addressAvailableAndValid;
     const isLoading = this.state.isLoading;
+    const address = this.state.address;
     return (
       <div>
         <Menu borderless fixed="top">
@@ -392,9 +404,9 @@ class App extends Component {
                   <Input
                     type="text"
                     icon="search"
-                    name="address"
+                    name="_address"
                     placeholder="Enter Address"
-                    onChange={this.handlechange}
+                    onChange={this.onChange}
                   />
                 </Form>
               </Menu.Item>
@@ -422,7 +434,11 @@ class App extends Component {
         </Menu>
 
         <Container style={{ marginTop: "7em" }}>
-          <RenderTab isLoggedIn={true} isLoading={isLoading} />
+          <RenderTab
+            isLoggedIn={true}
+            isLoading={isLoading}
+            address={address}
+          />
         </Container>
       </div>
     );
