@@ -27,12 +27,14 @@ function processTransactions(transactions, address) {
             verified: reviews[r].verified
           };
         }
+        console.log(_reviews);
 
         var _transactions = {
           in: [],
           out: []
         };
 
+        // giving
         for (var i in transactions) {
           // transaction is to verified selected smart contract (out)
           if (transactions[i].from == address) {
@@ -40,17 +42,18 @@ function processTransactions(transactions, address) {
             if (_companyAddresses.indexOf(transactions[i].to) >= 0) {
               _cTransaction["category"] =
                 _companies[transactions[i].to].category;
+              _cTransaction["name"] = _companies[transactions[i].to].name;
             } else {
               _cTransaction["category"] = null;
+              _cTransaction["name"] = null;
             }
             _transactions["out"].push(_cTransaction);
           }
 
-          // giving
+          // receiving
           if (transactions[i].to == address) {
             var _cTransaction = transactions[i];
-
-            if (_reviews.indexOf(transactions[i].hash) >= 0) {
+            if (_reviews[transactions[i].hash] != undefined) {
               _cTransaction["review"] = _reviews[transactions[i].hash].review;
               _cTransaction["verified"] =
                 _reviews[transactions[i].hash].verified;
