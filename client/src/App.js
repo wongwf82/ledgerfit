@@ -90,6 +90,15 @@ class MyGiving extends Component {
           // 5 Wei = x ETH
           _price = (0.000000000000000001 * __price).toFixed(3) + " ETH";
         }
+
+        var _txCost = 0;
+        var __txCost = parseInt(result.data.out[i].gasUsed) / 1000000000; // Wei to Gwei
+        var _gasPrice = parseInt(result.data.out[i].gasPrice) / 1000000000; // Wei to Gwei
+        if (__txCost > 0) {
+          // 1 Wei = 0.000000000000000001 ETH
+          // 5 Wei = x ETH
+          _txCost = __txCost * _gasPrice + " ETH";
+        }
         table.push(
           <tr>
             <td style={{ textOverflow: "ellipsis", wordBreak: "break-word" }}>
@@ -102,6 +111,7 @@ class MyGiving extends Component {
               {result.data.out[i].category} - {result.data.out[i].name}
             </td>
             <td>{_price}</td>
+            <td>{_txCost}</td>
           </tr>
         );
         if (categories.indexOf(result.data.out[i].category) >= 0) {
@@ -153,11 +163,14 @@ class MyGiving extends Component {
             <Table.Row>
               <Table.HeaderCell style={{ width: "30%" }}>Tx</Table.HeaderCell>
               <Table.HeaderCell style={{ width: "30%" }}>To</Table.HeaderCell>
-              <Table.HeaderCell style={{ width: "20%" }}>
+              <Table.HeaderCell style={{ width: "16%" }}>
                 Category
               </Table.HeaderCell>
-              <Table.HeaderCell style={{ width: "20%" }}>
+              <Table.HeaderCell style={{ width: "12%" }}>
                 Price
+              </Table.HeaderCell>
+              <Table.HeaderCell style={{ width: "12%" }}>
+                Actual Tx Cost/Fee
               </Table.HeaderCell>
             </Table.Row>
           </Table.Header>
@@ -226,6 +239,14 @@ class MyReceiving extends Component {
           // 5 Wei = x ETH
           _price = (0.000000000000000001 * __price).toFixed(3) + " ETH";
         }
+        var _txCost = 0;
+        var __txCost = parseInt(result.data.out[i].gasUsed) / 1000000000; // Wei to Gwei
+        var _gasPrice = parseInt(result.data.out[i].gasPrice) / 1000000000; // Wei to Gwei
+        if (__txCost > 0) {
+          // 1 Wei = 0.000000000000000001 ETH
+          // 5 Wei = x ETH
+          _txCost = __txCost * _gasPrice + " ETH";
+        }
         table.push(
           <tr>
             <td style={{ textOverflow: "ellipsis", wordBreak: "break-word" }}>
@@ -235,6 +256,7 @@ class MyReceiving extends Component {
             </td>
             <td>{result.data.in[i].from}</td>
             <td>{_price}</td>
+            <td>{_txCost}</td>
             <td>
               <Button
                 small
@@ -271,6 +293,14 @@ class MyReceiving extends Component {
           // 5 Wei = x ETH
           _price = (0.000000000000000001 * __price).toFixed(3) + " ETH";
         }
+        var _txCost = 0;
+        var __txCost = parseInt(result.data.out[i].gasUsed) / 1000000000; // Wei to Gwei
+        var _gasPrice = parseInt(result.data.out[i].gasPrice) / 1000000000; // Wei to Gwei
+        if (__txCost > 0) {
+          // 1 Wei = 0.000000000000000001 ETH
+          // 5 Wei = x ETH
+          _txCost = __txCost * _gasPrice + " ETH";
+        }
         table.push(
           <tr>
             <td style={{ textOverflow: "ellipsis", wordBreak: "break-word" }}>
@@ -280,6 +310,7 @@ class MyReceiving extends Component {
             </td>
             <td>{result.data.in[i].from}</td>
             <td>{_price}</td>
+            <td>{_txCost}</td>
             <td>
               <Button
                 small
@@ -340,8 +371,11 @@ class MyReceiving extends Component {
             <Table.Row>
               <Table.HeaderCell style={{ width: "20%" }}>Tx</Table.HeaderCell>
               <Table.HeaderCell style={{ width: "30%" }}>From</Table.HeaderCell>
-              <Table.HeaderCell style={{ width: "20%" }}>
+              <Table.HeaderCell style={{ width: "10%" }}>
                 Price
+              </Table.HeaderCell>
+              <Table.HeaderCell style={{ width: "10%" }}>
+                Actual Tx Cost/Fee
               </Table.HeaderCell>
               <Table.HeaderCell style={{ width: "20%" }} />
             </Table.Row>
