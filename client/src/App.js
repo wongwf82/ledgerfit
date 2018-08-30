@@ -77,21 +77,41 @@ class MyGiving extends Component {
     var self = this;
     self.setState({ isLoading: true });
     Axios.post("/get-transactions", {
-      address: "0x02f5359117678f8ea38f82a3d601e43e4db92f9e"
+      address: self.props.props.address
     }).then(function(result) {
       let table = [];
       var categories = [];
       var totalPer = 0;
       for (var i in result.data.out) {
+        var _price = 0;
+        var __price = parseInt(result.data.out[i].value);
+        if (__price > 0) {
+          // 1 Wei = 0.000000000000000001 ETH
+          // 5 Wei = x ETH
+          _price = (0.000000000000000001 * __price).toFixed(3) + " ETH";
+        }
+
+        var _txCost = 0;
+        var __txCost = parseInt(result.data.out[i].gasUsed) / 1000000000; // Wei to Gwei
+        var _gasPrice = parseInt(result.data.out[i].gasPrice) / 1000000000; // Wei to Gwei
+        if (__txCost > 0) {
+          // 1 Wei = 0.000000000000000001 ETH
+          // 5 Wei = x ETH
+          _txCost = __txCost * _gasPrice + " ETH";
+        }
         table.push(
           <tr>
-            <td style={{ textOverflow: "ellipsis" }}>
+            <td style={{ textOverflow: "ellipsis", wordBreak: "break-word" }}>
               <a href="#" title={result.data.out[i].hash}>
                 {result.data.out[i].hash}
               </a>
             </td>
             <td>{result.data.out[i].to}</td>
-            <td>{result.data.out[i].category}</td>
+            <td>
+              {result.data.out[i].category} - {result.data.out[i].name}
+            </td>
+            <td>{_price}</td>
+            <td>{_txCost}</td>
           </tr>
         );
         if (categories.indexOf(result.data.out[i].category) >= 0) {
@@ -141,9 +161,17 @@ class MyGiving extends Component {
         <Table striped style={{ width: "100%" }}>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell>Tx</Table.HeaderCell>
-              <Table.HeaderCell>To</Table.HeaderCell>
-              <Table.HeaderCell>Category</Table.HeaderCell>
+              <Table.HeaderCell style={{ width: "30%" }}>Tx</Table.HeaderCell>
+              <Table.HeaderCell style={{ width: "30%" }}>To</Table.HeaderCell>
+              <Table.HeaderCell style={{ width: "16%" }}>
+                Category
+              </Table.HeaderCell>
+              <Table.HeaderCell style={{ width: "12%" }}>
+                Price
+              </Table.HeaderCell>
+              <Table.HeaderCell style={{ width: "12%" }}>
+                Actual Tx Cost/Fee
+              </Table.HeaderCell>
             </Table.Row>
           </Table.Header>
 
@@ -184,6 +212,10 @@ class MyReceiving extends Component {
       remarks: "",
       address: ""
     };
+
+    this.handleClose = this.handleClose.bind(this);
+    this.handleCloseRemark = this.handleCloseRemark.bind(this);
+    this.reloadTable = this.reloadTable.bind(this);
   }
 
   // handleSetRemark(event) {
@@ -192,30 +224,101 @@ class MyReceiving extends Component {
   //   console.log(this.state);
   // }
 
-  componentDidMount() {
+  reloadTable() {
     var self = this;
-    self.setState({ isLoading: true });
     Axios.post("/get-transactions", {
-      address: "0x02f5359117678f8ea38f82a3d601e43e4db92f9e"
+      address: self.props.props.address
     }).then(function(result) {
       let table = [];
       var categories = [];
       for (var i in result.data.in) {
+        var _price = 0;
+        var __price = parseInt(result.data.in[i].value);
+        if (__price > 0) {
+          // 1 Wei = 0.000000000000000001 ETH
+          // 5 Wei = x ETH
+          _price = (0.000000000000000001 * __price).toFixed(3) + " ETH";
+        }
+        var _txCost = 0;
+        var __txCost = parseInt(result.data.out[i].gasUsed) / 1000000000; // Wei to Gwei
+        var _gasPrice = parseInt(result.data.out[i].gasPrice) / 1000000000; // Wei to Gwei
+        if (__txCost > 0) {
+          // 1 Wei = 0.000000000000000001 ETH
+          // 5 Wei = x ETH
+          _txCost = __txCost * _gasPrice + " ETH";
+        }
         table.push(
           <tr>
-            <td style={{ textOverflow: "ellipsis" }}>
+            <td style={{ textOverflow: "ellipsis", wordBreak: "break-word" }}>
               <a href="#" title={result.data.in[i].hash}>
                 {result.data.in[i].hash}
               </a>
             </td>
             <td>{result.data.in[i].from}</td>
+            <td>{_price}</td>
+            <td>{_txCost}</td>
             <td>
               <Button
+                small
                 onClick={self.showRemark("small", result.data.in[i].review)}
               >
                 Remarks
               </Button>
-              <Button onClick={self.show("tiny", result.data.in[i].hash)}>
+              <Button small onClick={self.show("tiny", result.data.in[i].hash)}>
+                Leave Remark
+              </Button>
+            </td>
+          </tr>
+        );
+      }
+
+      self.setState({ data: table });
+      self.setState({ isLoading: false });
+    });
+  }
+
+  componentDidMount() {
+    var self = this;
+    self.setState({ isLoading: true });
+    Axios.post("/get-transactions", {
+      address: self.props.props.address
+    }).then(function(result) {
+      let table = [];
+      var categories = [];
+      for (var i in result.data.in) {
+        var _price = 0;
+        var __price = parseInt(result.data.in[i].value);
+        if (__price > 0) {
+          // 1 Wei = 0.000000000000000001 ETH
+          // 5 Wei = x ETH
+          _price = (0.000000000000000001 * __price).toFixed(3) + " ETH";
+        }
+        var _txCost = 0;
+        var __txCost = parseInt(result.data.out[i].gasUsed) / 1000000000; // Wei to Gwei
+        var _gasPrice = parseInt(result.data.out[i].gasPrice) / 1000000000; // Wei to Gwei
+        if (__txCost > 0) {
+          // 1 Wei = 0.000000000000000001 ETH
+          // 5 Wei = x ETH
+          _txCost = __txCost * _gasPrice + " ETH";
+        }
+        table.push(
+          <tr>
+            <td style={{ textOverflow: "ellipsis", wordBreak: "break-word" }}>
+              <a href="#" title={result.data.in[i].hash}>
+                {result.data.in[i].hash}
+              </a>
+            </td>
+            <td>{result.data.in[i].from}</td>
+            <td>{_price}</td>
+            <td>{_txCost}</td>
+            <td>
+              <Button
+                small
+                onClick={self.showRemark("small", result.data.in[i].review)}
+              >
+                Remarks
+              </Button>
+              <Button small onClick={self.show("tiny", result.data.in[i].hash)}>
                 Leave Remark
               </Button>
             </td>
@@ -234,6 +337,14 @@ class MyReceiving extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
+  handleCloseRemark = e => {
+    this.setState({ openRemark: false });
+  };
+
+  handleClose = e => {
+    this.setState({ open: false });
+  };
+
   handleSetRemark = e => {
     e.preventDefault();
     var self = this;
@@ -242,6 +353,7 @@ class MyReceiving extends Component {
       remarks,
       address
     }).then(result => {
+      self.reloadTable();
       self.close();
     });
   };
@@ -257,9 +369,15 @@ class MyReceiving extends Component {
         <Table striped style={{ width: "100%" }}>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell>Tx</Table.HeaderCell>
-              <Table.HeaderCell>From</Table.HeaderCell>
-              <Table.HeaderCell />
+              <Table.HeaderCell style={{ width: "20%" }}>Tx</Table.HeaderCell>
+              <Table.HeaderCell style={{ width: "30%" }}>From</Table.HeaderCell>
+              <Table.HeaderCell style={{ width: "10%" }}>
+                Price
+              </Table.HeaderCell>
+              <Table.HeaderCell style={{ width: "10%" }}>
+                Actual Tx Cost/Fee
+              </Table.HeaderCell>
+              <Table.HeaderCell style={{ width: "20%" }} />
             </Table.Row>
           </Table.Header>
 
@@ -272,13 +390,15 @@ class MyReceiving extends Component {
             <p>{this.state.remarks}</p>
           </Modal.Content>
           <Modal.Actions>
-            <Button negative>Close</Button>
-            <Button
+            <Button negative onClick={this.handleCloseRemark}>
+              Close
+            </Button>
+            {/* <Button
               positive
               icon="checkmark"
               labelPosition="right"
               content="Confirm"
-            />
+            /> */}
           </Modal.Actions>
         </Modal>
 
@@ -295,7 +415,9 @@ class MyReceiving extends Component {
             </Form>
           </Modal.Content>
           <Modal.Actions>
-            <Button negative>Cancel</Button>
+            <Button negative onClick={this.handleClose}>
+              Cancel
+            </Button>
             <Button
               onClick={this.handleSetRemark}
               positive
@@ -313,11 +435,11 @@ class MyReceiving extends Component {
 const panes = [
   {
     menuItem: "My Givings",
-    render: () => <MyGiving />
+    render: props => <MyGiving props={props} />
   },
   {
     menuItem: "My Receivings",
-    render: () => <MyReceiving />
+    render: props => <MyReceiving props={props} />
   }
 ];
 
@@ -327,10 +449,20 @@ function noAddress(props) {
 
 function RenderTab(props) {
   const isLoggedIn = props.isLoggedIn;
-  if (isLoggedIn) {
-    return <Tab panes={panes} />;
+  const address = props.address;
+  const otherProps = {
+    address: props.address
+  };
+  if (isLoggedIn && address != null) {
+    return (
+      <div>
+        <h4>Social Ledger for: {address}</h4>
+        <br />
+        <Tab {...otherProps} panes={panes} />
+      </div>
+    );
   } else {
-    return "";
+    return "Enter wallet address";
   }
 }
 
@@ -338,15 +470,23 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: "",
       address: null,
+      _address: null,
+      value: "",
       isLoading: false,
       addressAvailableAndValid: false
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
+    this.handleExample = this.handleExample.bind(this);
   }
+
+  onChange = e => {
+    // Because we named the inputs to match their corresponding values in state, it's
+    // super easy to update the state
+    this.setState({ [e.target.name]: e.target.value });
+  };
 
   handleChange(event) {
     const target = event.target;
@@ -360,9 +500,9 @@ class App extends Component {
 
   handleSearch(event) {
     event.preventDefault();
-    console.log(this.state.value);
     this.setState({
-      isLoading: true
+      isLoading: true,
+      address: this.state._address
     });
     // var self = this;
     // Axios.post("https://ledgerfitbackend.herokuapp.com/get-transactions", {
@@ -372,9 +512,18 @@ class App extends Component {
     // });
   }
 
+  handleExample(event) {
+    event.preventDefault();
+    this.setState({
+      isLoading: true,
+      address: "0x02f5359117678f8ea38f82a3d601e43e4db92f9e"
+    });
+  }
+
   render() {
     const addressAvailableAndvalid = this.state.addressAvailableAndValid;
     const isLoading = this.state.isLoading;
+    const address = this.state.address;
     return (
       <div>
         <Menu borderless fixed="top">
@@ -392,11 +541,14 @@ class App extends Component {
                   <Input
                     type="text"
                     icon="search"
-                    name="address"
+                    name="_address"
                     placeholder="Enter Address"
-                    onChange={this.handlechange}
+                    onChange={this.onChange}
                   />
                 </Form>
+              </Menu.Item>
+              <Menu.Item>
+                <Button onClick={this.handleExample}>Show Example</Button>
               </Menu.Item>
             </Menu.Menu>
             {/* <Menu.Item as="a">Home</Menu.Item>
@@ -422,7 +574,11 @@ class App extends Component {
         </Menu>
 
         <Container style={{ marginTop: "7em" }}>
-          <RenderTab isLoggedIn={true} isLoading={isLoading} />
+          <RenderTab
+            isLoggedIn={true}
+            isLoading={isLoading}
+            address={address}
+          />
         </Container>
       </div>
     );

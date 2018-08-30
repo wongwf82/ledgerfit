@@ -6,6 +6,7 @@
     "start": "node ./bin/www",
     "client": "cd client && yarn start",
     "server": "nodemon app.js",
+    "client-install": "cd client && yarn",
     "heroku-postbuild": " sequelize db:migrate && sequelize db:seed:all && cd client && yarn && yarn build"
   },
   "dependencies": {
