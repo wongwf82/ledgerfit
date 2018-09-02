@@ -136,8 +136,8 @@ class MyGiving extends Component {
               <td>{_txCost}</td>
             </tr>
           );
-          if (categories.indexOf(result.data.out[i].category) >= 0) {
-            categories[result.data.out[i].category]++;
+          if (result.data.out[i].category in categories) {
+            categories[result.data.out[i].category] += 1;
             totalPer++;
           } else if (result.data.out[i].category != null) {
             categories[result.data.out[i].category] = 1;
