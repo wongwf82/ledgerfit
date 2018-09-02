@@ -4,10 +4,12 @@
   "private": true,
   "proxy": "http://localhost:5000/",
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.4",
     "axios": "^0.18.0",
     "chart.js": "^2.7.2",
     "chartjs": "^0.3.24",
     "react": "^16.4.2",
+    "react-announcement-bar": "^0.0.1",
     "react-chartjs-2": "^2.7.4",
     "react-dom": "^16.4.2",
     "react-scripts": "1.1.4",
