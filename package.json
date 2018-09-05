@@ -10,6 +10,9 @@
     "heroku-postbuild": " sequelize db:migrate && sequelize db:seed:all && cd client && yarn && yarn build"
   },
   "dependencies": {
+    "@fortawesome/free-brands-svg-icons": "^5.3.1",
+    "@fortawesome/free-solid-svg-icons": "^5.3.1",
+    "@fortawesome/react-fontawesome": "^0.1.2",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "etherscan": "^0.2.2",

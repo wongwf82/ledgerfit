@@ -3,3 +3,37 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+.announcement {
+  font-family: sans-serif;
+  display: inline-block;
+  height: 60px;
+  text-align: center;
+  width: 100%;
+  background: black;
+  color: white;
+  font-family: Arial, sans;
+  margin: 0;
+  padding: 0;
+  vertical-align: middle;
+  font-size: 1em;
+  line-height: 60px;
+}
+
+.announcement p {
+  line-height: 60px;
+  vertical-align: middle;
+}
+
+.announcement a {
+  color: #ccc;
+}
+
+.announcement a:hover {
+  color: red;
+}
+
+.announcement .icon-links a {
+  padding-right: 10px;
+  padding-left: 10px;
+}
