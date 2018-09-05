@@ -526,7 +526,26 @@ class App extends Component {
     const address = this.state.address;
     return (
       <div>
-        <Menu borderless fixed="top">
+        <div className="announcement">
+          <p style={{ float: "left", paddingLeft: "20px" }}>
+            This is <a href="https://www.greenlink.io">GreenLink</a>'s proof of
+            concept for a Social Ledger and is an open source project. Visit{" "}
+            <a href="https://www.github.com/greenlink-io/ledgerfit">GitHub</a>{" "}
+            and download the source code
+          </p>
+          <p
+            className="icon-links"
+            style={{ float: "right", paddingRight: "20px" }}
+          >
+            <a href="https://www.greenlink.io">
+              <FontAwesomeIcon icon="link" />
+            </a>
+            <a href="https://www.github.com/greenlink-io/ledgerfit">
+              <FontAwesomeIcon icon={["fab", "github"]} />
+            </a>
+          </p>
+        </div>
+        <Menu borderless style={{ marginTop: "0px" }}>
           <Container>
             <Menu.Item as="a" header>
               <Image
@@ -552,7 +571,7 @@ class App extends Component {
               </Menu.Item>
             </Menu.Menu>
             {/* <Menu.Item as="a">Home</Menu.Item>
-  
+
           <Dropdown item simple text="Dropdown">
             <Dropdown.Menu>
               <Dropdown.Item>List Item</Dropdown.Item>
