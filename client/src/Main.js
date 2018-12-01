@@ -600,8 +600,7 @@ class Main extends Component {
       <div>
         <div className="announcement">
           <p style={{ float: "left", paddingLeft: "20px" }}>
-            This is <a href="https://www.greenlink.io">GreenLink</a>
-            's proof of concept for a Social Ledger and is an open source
+            This is a proof of concept for a Social Ledger and is an open source
             project. Visit{" "}
             <a href="https://www.github.com/greenlink-io/ledgerfit">
               GitHub
