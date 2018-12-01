@@ -602,7 +602,7 @@ class Main extends Component {
           <p style={{ float: "left", paddingLeft: "20px" }}>
             This is a proof of concept for a Social Ledger and is an open source
             project. Visit{" "}
-            <a href="https://www.github.com/greenlink-io/ledgerfit">
+            <a href="https://github.com/wongwf82/ledgerfit">
               GitHub
             </a>{" "}
             and download the source code
